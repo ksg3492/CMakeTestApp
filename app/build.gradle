@@ -1,0 +1,102 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
+
+android {
+    compileSdkVersion 31
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        applicationId "com.sunggil.cmaketest"
+        minSdkVersion 23
+        targetSdkVersion 31
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        debug {
+            //.android default keystore 정보
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storeFile file('../debug.keystore')
+            storePassword 'android'
+        }
+        release {
+            //private keystore 정보
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storeFile file('../debug.keystore')
+            storePassword 'android'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        viewBinding true
+    }
+    externalNativeBuild {
+        cmake {
+            path file('src/main/cpp/CMakeLists.txt')
+            version = "3.10.2"
+        }
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false     //난독화 유무
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            externalNativeBuild {
+                cmake {
+                    //-D이후의 문자열이 변수명이 된다
+                    arguments "-DCMAKE_BUILD_TYPE=debug"
+                }
+            }
+        }
+        release {
+            minifyEnabled false     //난독화 유무
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            externalNativeBuild {
+                cmake {
+                    //-D이후의 문자열이 변수명이 된다
+                    arguments "-DCMAKE_BUILD_TYPE=release"
+                }
+            }
+        }
+        staging {
+            minifyEnabled false     //난독화 유무
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            externalNativeBuild {
+                cmake {
+                    //-D이후의 문자열이 변수명이 된다
+                    arguments "-DCMAKE_BUILD_TYPE=staging"
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.6.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.4.2'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.4.2'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}
